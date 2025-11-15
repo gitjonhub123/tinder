@@ -1,73 +1,145 @@
 'use client'
 
 import { useState } from 'react'
-import ProfileCard from '@/components/ProfileCard'
-import { demoUsers, User } from '@/lib/demoData'
-import './page.css'
+import { useRouter } from 'next/navigation'
+import Header from '@/components/Header'
 
-export default function DiscoverPage() {
-  const [users, setUsers] = useState<User[]>(demoUsers)
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [likedUsers, setLikedUsers] = useState<string[]>([])
-  const [matches, setMatches] = useState<string[]>([])
+export default function StartPage() {
+  const router = useRouter()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleLike = (userId: string) => {
-    setLikedUsers([...likedUsers, userId])
-    // Simulate match (50% chance)
-    if (Math.random() > 0.5) {
-      setMatches([...matches, userId])
-      setTimeout(() => {
-        alert(`It's a match! You and ${users.find(u => u.id === userId)?.name} liked each other!`)
-      }, 500)
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setErrors({})
+
+    // Validation
+    const newErrors: { name?: string; email?: string } = {}
+    if (!name.trim()) {
+      newErrors.name = 'Name is required'
     }
-    moveToNext()
-  }
+    if (!email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!validateEmail(email)) {
+      newErrors.email = 'Invalid email address'
+    }
 
-  const handleDislike = (userId: string) => {
-    moveToNext()
-  }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
 
-  const moveToNext = () => {
-    if (currentIndex < users.length - 1) {
-      setCurrentIndex(currentIndex + 1)
-    } else {
-      // Reset or show end message
-      setCurrentIndex(0)
-      setUsers([...demoUsers]) // Reset users
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch('/api/assessments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim(), email: email.trim() }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to create assessment')
+      }
+
+      const data = await response.json()
+      router.push(`/assessment/${data.assessmentId}/instructions`)
+    } catch (error) {
+      setErrors({ email: error instanceof Error ? error.message : 'An error occurred' })
+    } finally {
+      setIsSubmitting(false)
     }
   }
-
-  const currentUser = users[currentIndex]
 
   return (
-    <div className="discover-page">
-      <div className="discover-container">
-        <div className="discover-header">
-          <h1>Discover People</h1>
-          <p>Find your perfect match</p>
-        </div>
-        
-        {currentUser ? (
-          <ProfileCard
-            user={currentUser}
-            onLike={handleLike}
-            onDislike={handleDislike}
-          />
-        ) : (
-          <div className="no-more-profiles">
-            <h2>No more profiles to show</h2>
-            <p>Check back later for new matches!</p>
-          </div>
-        )}
-
-        <div className="matches-preview">
-          {matches.length > 0 && (
-            <div className="matches-badge">
-              {matches.length} {matches.length === 1 ? 'Match' : 'Matches'}
+    <>
+      <Header />
+      <main className="pt-[60px] min-h-screen bg-white">
+        <div className="max-w-[700px] mx-auto px-8 py-16">
+          <h2 className="text-2xl font-bold text-atlas-text mb-4">
+            Atlas Machine Learning Assessment
+          </h2>
+          
+          <div className="space-y-6 mb-8">
+            <p className="text-base leading-relaxed text-atlas-text">
+              Welcome. This assessment contains 4 advanced machine learning questions.
+            </p>
+            <p className="text-base leading-relaxed text-atlas-text">
+              You have 45 minutes to complete all questions.
+            </p>
+            
+            <div className="mt-6">
+              <p className="font-semibold text-atlas-text mb-3">Before you begin:</p>
+              <ul className="list-disc list-inside space-y-2 text-atlas-text ml-4">
+                <li>Answer all questions to the best of your ability</li>
+                <li>You may navigate between questions freely</li>
+                <li>Your progress is automatically saved</li>
+                <li>Timer cannot be paused once started</li>
+              </ul>
             </div>
-          )}
+
+            <p className="font-semibold text-atlas-text mt-6">
+              Enter your information to begin:
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-atlas-text mb-2">
+                Full Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={`w-full px-4 py-3 border rounded ${
+                  errors.name ? 'border-atlas-error' : 'border-gray-300'
+                } focus:outline-none focus:ring-2 focus:ring-atlas-blue-light`}
+                required
+              />
+              {errors.name && (
+                <p className="mt-1 text-sm text-atlas-error">{errors.name}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-atlas-text mb-2">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full px-4 py-3 border rounded ${
+                  errors.email ? 'border-atlas-error' : 'border-gray-300'
+                } focus:outline-none focus:ring-2 focus:ring-atlas-blue-light`}
+                required
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-atlas-error">{errors.email}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-atlas-blue-light text-white py-3 px-6 rounded font-semibold text-base h-12 hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Creating...' : 'Start Assessment'}
+            </button>
+          </form>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   )
 }

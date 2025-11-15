@@ -1,24 +1,38 @@
 {
-  "name": "dating-app",
+  "name": "atlas-assessment",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.7.1",
     "next": "14.0.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.2.0",
+    "zod": "^3.22.4",
+    "resend": "^2.1.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "typescript": "^5",
+    "autoprefixer": "^10.4.16",
     "eslint": "^8",
-    "eslint-config-next": "14.0.4"
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8.4.32",
+    "prisma": "^5.7.1",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5",
+    "ts-node": "^10.9.2"
   }
 }

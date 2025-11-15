@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Navigation from '@/components/Navigation'
 
 export const metadata: Metadata = {
-  title: 'Match.com - Find Your Match',
-  description: 'Connect with people who share your interests',
+  title: 'Atlas Assessment',
+  description: 'Machine Learning Assessment Platform',
 }
 
 export default function RootLayout({
@@ -14,10 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <Navigation />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   )
 }

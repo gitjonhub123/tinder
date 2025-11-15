@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Assessment {
+  id            String   @id @default(uuid())
+  candidateName String
+  candidateEmail String
+  startedAt     DateTime @default(now())
+  submittedAt   DateTime?
+  timeRemaining Int      @default(2700) // 45 minutes in seconds
+  status        String   @default("in_progress") // in_progress, submitted, scored
+  answers       Answer[]
+  createdAt     DateTime @default(now())
+
+  @@index([status])
+  @@index([candidateEmail])
+}
+
+model Answer {
+  id             String     @id @default(uuid())
+  assessmentId   String
+  assessment     Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  questionNumber Int        // 1-4
+  answerText     String     @db.Text
+  score          Int?       // 0-500, null until scored
+  lastSavedAt    DateTime   @default(now())
+  
+  @@unique([assessmentId, questionNumber])
+  @@index([assessmentId])
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // hashed
+  createdAt DateTime @default(now())
+}
