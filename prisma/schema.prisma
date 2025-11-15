@@ -30,7 +30,7 @@ model Answer {
   assessmentId   String
   assessment     Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
   questionNumber Int        // 1-4
-  answerText     String
+  answerText     String     @db.Text
   score          Int?       // 0-500, null until scored
   lastSavedAt    DateTime   @default(now())
   
