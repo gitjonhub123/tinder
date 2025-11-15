@@ -50,13 +50,6 @@ export default function CompletePage() {
             Your assessment has been successfully submitted.
           </p>
 
-          <div className="space-y-3 mb-8">
-            <div className="flex items-center gap-2">
-              <span className="text-atlas-success text-xl">✓</span>
-              <span className="text-base text-atlas-text">All 4 answers received</span>
-            </div>
-          </div>
-
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-atlas-text mb-4">
               What happens next:
