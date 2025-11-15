@@ -86,17 +86,35 @@ export async function POST(request: NextRequest) {
     })
 
     // Generate PDF and send email
-    await sendResultsPDF(assessmentsWithScores, sortBy, sortOrder)
+    try {
+      await sendResultsPDF(assessmentsWithScores, sortBy, sortOrder)
+    } catch (emailError: any) {
+      console.error('Error sending PDF email:', emailError)
+      // Return detailed error message
+      const errorMessage = emailError?.message || 'Unknown error occurred'
+      return NextResponse.json(
+        { 
+          error: 'Failed to send email',
+          details: errorMessage,
+          count: assessmentsWithScores.length,
+        },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({
       success: true,
       message: 'PDF report sent to your email',
       count: assessmentsWithScores.length,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error exporting PDF:', error)
+    const errorMessage = error?.message || 'Unknown error occurred'
     return NextResponse.json(
-      { error: 'Failed to export PDF. Please try again.' },
+      { 
+        error: 'Failed to export PDF',
+        details: errorMessage,
+      },
       { status: 500 }
     )
   }

@@ -25,12 +25,26 @@ export default function AdminDashboard() {
   const [isExporting, setIsExporting] = useState(false)
   const [exportSortBy, setExportSortBy] = useState<'score' | 'name' | 'submittedAt' | 'createdAt'>('score')
   const [exportSortOrder, setExportSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [emailConfigStatus, setEmailConfigStatus] = useState<{ configured: boolean; message: string } | null>(null)
 
   const itemsPerPage = 20
 
   useEffect(() => {
     loadAssessments()
+    checkEmailConfig()
   }, [filter, currentPage])
+
+  const checkEmailConfig = async () => {
+    try {
+      const response = await fetch('/api/admin/check-email-config')
+      if (response.ok) {
+        const data = await response.json()
+        setEmailConfigStatus({ configured: data.configured, message: data.message })
+      }
+    } catch (error) {
+      console.error('Error checking email config:', error)
+    }
+  }
 
   const loadAssessments = async () => {
     setIsLoading(true)
@@ -70,15 +84,21 @@ export default function AdminDashboard() {
         }
       )
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error('Failed to export PDF')
+        // Show detailed error message
+        const errorMsg = data.details || data.error || 'Failed to export PDF'
+        console.error('PDF export error:', errorMsg)
+        alert(`Error: ${errorMsg}\n\nPlease check:\n1. EMAIL_API_KEY is set in Vercel\n2. Email address is verified in Resend\n3. Check browser console for details`)
+        return
       }
 
-      const data = await response.json()
-      alert(`PDF report sent to your email! (${data.count} assessments)`)
-    } catch (error) {
+      alert(`PDF report sent to your email! (${data.count} assessments)\n\nCheck: ${process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'jongreat177@gmail.com'}`)
+    } catch (error: any) {
       console.error('Error exporting PDF:', error)
-      alert('Failed to export PDF. Please try again.')
+      const errorMsg = error?.message || 'Network error or server unavailable'
+      alert(`Failed to export PDF: ${errorMsg}\n\nPlease check your connection and try again.`)
     } finally {
       setIsExporting(false)
     }
@@ -125,35 +145,42 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            <div className="flex gap-4 items-center border-t pt-4">
-              <span className="text-sm font-semibold text-atlas-text">Export PDF:</span>
-              <select
-                value={exportSortBy}
-                onChange={(e) => setExportSortBy(e.target.value as any)}
-                className="px-3 py-2 border border-gray-300 rounded text-sm"
-                disabled={isExporting}
-              >
-                <option value="score">Sort by Score</option>
-                <option value="name">Sort by Name</option>
-                <option value="submittedAt">Sort by Submission Date</option>
-                <option value="createdAt">Sort by Created Date</option>
-              </select>
-              <select
-                value={exportSortOrder}
-                onChange={(e) => setExportSortOrder(e.target.value as any)}
-                className="px-3 py-2 border border-gray-300 rounded text-sm"
-                disabled={isExporting}
-              >
-                <option value="desc">Descending</option>
-                <option value="asc">Ascending</option>
-              </select>
-              <button
-                onClick={handleExportPDF}
-                disabled={isExporting}
-                className="px-6 py-2 bg-atlas-blue-light text-white rounded font-semibold hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isExporting ? 'Sending...' : 'Export & Email PDF'}
-              </button>
+            <div className="flex flex-col gap-2 border-t pt-4">
+              {emailConfigStatus && !emailConfigStatus.configured && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded p-3 text-sm">
+                  <strong>⚠️ Email Not Configured:</strong> {emailConfigStatus.message}
+                </div>
+              )}
+              <div className="flex gap-4 items-center">
+                <span className="text-sm font-semibold text-atlas-text">Export PDF:</span>
+                <select
+                  value={exportSortBy}
+                  onChange={(e) => setExportSortBy(e.target.value as any)}
+                  className="px-3 py-2 border border-gray-300 rounded text-sm"
+                  disabled={isExporting}
+                >
+                  <option value="score">Sort by Score</option>
+                  <option value="name">Sort by Name</option>
+                  <option value="submittedAt">Sort by Submission Date</option>
+                  <option value="createdAt">Sort by Created Date</option>
+                </select>
+                <select
+                  value={exportSortOrder}
+                  onChange={(e) => setExportSortOrder(e.target.value as any)}
+                  className="px-3 py-2 border border-gray-300 rounded text-sm"
+                  disabled={isExporting}
+                >
+                  <option value="desc">Descending</option>
+                  <option value="asc">Ascending</option>
+                </select>
+                <button
+                  onClick={handleExportPDF}
+                  disabled={isExporting}
+                  className="px-6 py-2 bg-atlas-blue-light text-white rounded font-semibold hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isExporting ? 'Sending...' : 'Export & Email PDF'}
+                </button>
+              </div>
             </div>
           </div>
 
