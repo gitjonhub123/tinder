@@ -169,6 +169,7 @@ export default function QuestionPage() {
         title={`Atlas Assessment | Question ${questionNum} of 4`}
         timerSeconds={timeRemaining}
         onTimerExpire={handleAutoSubmit}
+        showTimer={true}
       />
       <main className="pt-[100px] min-h-screen bg-white">
         <div className="max-w-[900px] mx-auto px-8 py-8">

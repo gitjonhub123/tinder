@@ -9,6 +9,23 @@ export default function InstructionsPage() {
   const router = useRouter()
   const assessmentId = params.id as string
   const [isLoading, setIsLoading] = useState(false)
+  const [timeRemaining, setTimeRemaining] = useState(2700) // 45 minutes
+
+  useEffect(() => {
+    // Load assessment time remaining
+    const loadAssessment = async () => {
+      try {
+        const response = await fetch(`/api/assessments/${assessmentId}`)
+        if (response.ok) {
+          const assessment = await response.json()
+          setTimeRemaining(assessment.timeRemaining || 2700)
+        }
+      } catch (error) {
+        console.error('Error loading assessment:', error)
+      }
+    }
+    loadAssessment()
+  }, [assessmentId])
 
   const handleBegin = async () => {
     setIsLoading(true)
@@ -43,7 +60,11 @@ export default function InstructionsPage() {
 
   return (
     <>
-      <Header />
+      <Header 
+        timerSeconds={timeRemaining}
+        onTimerExpire={() => {}}
+        showTimer={true}
+      />
       <main className="pt-[60px] min-h-screen bg-white">
         <div className="max-w-[800px] mx-auto px-8 py-16">
           <h2 className="text-2xl font-bold text-atlas-text mb-8">Instructions</h2>

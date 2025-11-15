@@ -49,8 +49,10 @@ export default function Timer({ initialSeconds, onExpire, className = '' }: Time
   }
 
   return (
-    <span className={`font-mono font-bold text-lg ${textColor} ${className}`}>
-      Time: {displayTime}
-    </span>
+    <div className={`flex items-center ${className}`}>
+      <span className={`font-mono font-bold text-lg ${textColor}`}>
+        {displayTime}
+      </span>
+    </div>
   )
 }
