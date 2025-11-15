@@ -10,11 +10,6 @@ export default function StartPage() {
   const [errors, setErrors] = useState<{ name?: string }>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailRegex.test(email)
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
