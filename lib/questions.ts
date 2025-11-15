@@ -53,6 +53,7 @@ Design a system to:
 5. Discuss scalability: how does your method work for models with billions of parameters?
 
 Your answer should ground itself in recent mechanistic interpretability work (e.g., attention head analysis, feature visualization, causal interventions) and propose concrete mechanisms for surgery.`,
+  },
   {
     number: 4,
     title: 'Training Efficiency & Sample Complexity in Non-Stationary Environments',
