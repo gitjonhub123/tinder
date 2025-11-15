@@ -72,5 +72,5 @@ Propose a unified framework for:
 5. Discuss how your approach scales to trillion-parameter models.
 
 Your answer should address the key challenges: data efficiency, computational cost, avoiding catastrophic forgetting, and theoretical guarantees (if possible).`,
-  ],
+  },
 ]
