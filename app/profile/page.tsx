@@ -13,7 +13,7 @@ export default function ProfilePage() {
     // In a real app, this would save to a backend
   }
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | number | string[]) => {
     setProfile({ ...profile, [field]: value })
   }
 
@@ -66,7 +66,7 @@ export default function ProfilePage() {
                   <input
                     type="number"
                     value={profile.age}
-                    onChange={(e) => handleChange('age', parseInt(e.target.value))}
+                    onChange={(e) => handleChange('age', parseInt(e.target.value) || 0)}
                     className="edit-input small"
                   />
                 ) : (
