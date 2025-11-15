@@ -1,7 +1,13 @@
 import { Resend } from 'resend'
 import { Assessment, Answer } from '@prisma/client'
 
-const resend = new Resend(process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY)
+function getResend() {
+  const apiKey = process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY
+  if (!apiKey) {
+    throw new Error('EMAIL_API_KEY or RESEND_API_KEY environment variable is required')
+  }
+  return new Resend(apiKey)
+}
 
 export async function sendResultsEmail(
   assessment: Assessment & { answers: Answer[] },
@@ -37,6 +43,7 @@ Atlas Assessment Team
     `.trim()
 
     // Send to candidate
+    const resend = getResend()
     await resend.emails.send({
       from: 'Atlas Assessment <noreply@atlas-assessment.com>',
       to: assessment.candidateEmail,
