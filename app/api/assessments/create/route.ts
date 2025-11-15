@@ -67,6 +67,16 @@ export async function POST(request: NextRequest) {
       )
     }
     
+    // Provide helpful error message for missing DATABASE_URL
+    if (error?.message?.includes('Environment variable not found: DATABASE_URL')) {
+      return NextResponse.json(
+        { 
+          error: 'Database not configured. Please set DATABASE_URL in Vercel environment variables. See FIX_DATABASE_URL.md for instructions.' 
+        },
+        { status: 500 }
+      )
+    }
+    
     return NextResponse.json(
       { error: error?.message || 'Failed to create assessment. Please try again.' },
       { status: 500 }
