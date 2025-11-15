@@ -1,0 +1,201 @@
+.profile-card {
+  background: var(--bg-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  max-width: 500px;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+  animation: slideIn 0.5s ease;
+}
+
+.profile-card.liked {
+  animation: likeAnimation 0.5s ease;
+  transform: translateX(100px) rotate(15deg);
+  opacity: 0;
+}
+
+.profile-card.disliked {
+  animation: dislikeAnimation 0.5s ease;
+  transform: translateX(-100px) rotate(-15deg);
+  opacity: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes likeAnimation {
+  0% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100px) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes dislikeAnimation {
+  0% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100px) rotate(-15deg);
+    opacity: 0;
+  }
+}
+
+.profile-photo-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  background: var(--bg-light);
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.photo-nav:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.photo-nav.prev {
+  left: 10px;
+}
+
+.photo-nav.next {
+  right: 10px;
+}
+
+.photo-indicator {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.profile-info {
+  padding: 24px;
+}
+
+.profile-header {
+  margin-bottom: 8px;
+}
+
+.profile-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.profile-location {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.profile-occupation {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.profile-bio {
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.profile-interests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.interest-tag {
+  background: var(--bg-light);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.action-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.dislike-btn {
+  background: var(--bg-white);
+  color: var(--text-secondary);
+  border: 2px solid var(--border-color);
+}
+
+.dislike-btn:hover {
+  background: #fee;
+  border-color: #f44;
+  color: #f44;
+  transform: scale(1.1);
+}
+
+.like-btn {
+  background: var(--primary-color);
+  color: white;
+}
+
+.like-btn:hover {
+  background: var(--primary-dark);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-hover);
+}

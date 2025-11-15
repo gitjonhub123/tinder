@@ -1,0 +1,62 @@
+.discover-page {
+  min-height: calc(100vh - 70px);
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.discover-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.discover-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.discover-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.discover-header p {
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+.no-more-profiles {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.no-more-profiles h2 {
+  font-size: 28px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.no-more-profiles p {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.matches-preview {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.matches-badge {
+  display: inline-block;
+  background: var(--primary-color);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: var(--shadow);
+}

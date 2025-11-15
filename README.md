@@ -1,21 +1,24 @@
-# SAT Math Test - Bluebook Style
+# Dating App - Match.com Style
 
-A single-page SAT-style math test built to mimic the SAT Bluebook digital testing interface.
+A modern dating application inspired by Match.com, built with Next.js and ready for Vercel deployment.
 
 ## Features
 
-- Complete introduction section with test instructions
-- One medium-difficulty SAT-style math question
-- Thank you section upon completion
-- SAT Bluebook-inspired design with professional styling
-- Interactive answer selection
-- Responsive design for all devices
+- User profile browsing and discovery
+- Like/dislike matching system
+- Messaging interface
+- Modern, responsive design
+- Match.com-inspired UI/UX
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ## Deployment
 
-This project is ready for immediate deployment on Vercel. Simply connect your GitHub repository to Vercel and it will automatically deploy.
-
-## Local Development
-
-Open `index.html` in any modern web browser to view the test locally.
-
+This app is ready for immediate deployment on Vercel. Simply connect your GitHub repository to Vercel.
