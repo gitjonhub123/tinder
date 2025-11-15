@@ -88,9 +88,15 @@ export default function CompletePage() {
             <p className="text-base leading-relaxed text-atlas-text mb-4">
               Each answer is scored out of 500 points (maximum 2000 total).
             </p>
-            <p className="text-base leading-relaxed text-atlas-text">
-              Results will be sent to: <strong>{assessment.candidateEmail}</strong>
-            </p>
+            {assessment.candidateEmail ? (
+              <p className="text-base leading-relaxed text-atlas-text">
+                Results will be sent to: <strong>{assessment.candidateEmail}</strong>
+              </p>
+            ) : (
+              <p className="text-base leading-relaxed text-atlas-text">
+                <em>No email provided. Results will not be sent via email.</em>
+              </p>
+            )}
           </div>
 
           <div className="mt-12 pt-8 border-t text-center">

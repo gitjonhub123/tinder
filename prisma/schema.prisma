@@ -15,7 +15,7 @@ datasource db {
 model Assessment {
   id            String   @id @default(uuid())
   candidateName String
-  candidateEmail String
+  candidateEmail String?
   startedAt     DateTime @default(now())
   submittedAt   DateTime?
   timeRemaining Int      @default(2700) // 45 minutes in seconds

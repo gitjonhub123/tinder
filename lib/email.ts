@@ -15,6 +15,12 @@ export async function sendResultsEmail(
   adminNotes: string
 ) {
   try {
+    // If no email provided, skip sending
+    if (!assessment.candidateEmail) {
+      console.log('No email provided, skipping email send')
+      return { success: true, skipped: true }
+    }
+
     const totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0)
     const adminEmail = process.env.ADMIN_EMAIL || 'jongreat177@gmail.com'
 

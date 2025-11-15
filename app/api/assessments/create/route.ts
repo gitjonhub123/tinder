@@ -20,9 +20,9 @@ export async function POST(request: NextRequest) {
     const { name, email } = body
 
     // Validation
-    if (!name || !email) {
+    if (!name) {
       return NextResponse.json(
-        { error: 'Name and email are required' },
+        { error: 'Name is required' },
         { status: 400 }
       )
     }
@@ -34,16 +34,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!validateEmail(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email address' },
-        { status: 400 }
-      )
+    // Email is optional, but if provided, must be valid
+    let sanitizedEmail: string | null = null
+    if (email && email.trim()) {
+      if (!validateEmail(email)) {
+        return NextResponse.json(
+          { error: 'Invalid email address' },
+          { status: 400 }
+        )
+      }
+      sanitizedEmail = sanitizeInput(email.toLowerCase())
     }
 
     // Sanitize inputs
     const sanitizedName = sanitizeInput(name)
-    const sanitizedEmail = sanitizeInput(email.toLowerCase())
 
     // Create assessment
     const assessment = await prisma.assessment.create({

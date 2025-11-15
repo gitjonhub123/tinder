@@ -25,9 +25,8 @@ export default function StartPage() {
     if (!name.trim()) {
       newErrors.name = 'Name is required'
     }
-    if (!email.trim()) {
-      newErrors.email = 'Email is required'
-    } else if (!validateEmail(email)) {
+    // Email is optional, but if provided, must be valid
+    if (email.trim() && !validateEmail(email)) {
       newErrors.email = 'Invalid email address'
     }
 
@@ -114,7 +113,7 @@ export default function StartPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-atlas-text mb-2">
-                Email Address
+                Email Address <span className="text-gray-500 text-xs">(optional)</span>
               </label>
               <input
                 id="email"
@@ -124,7 +123,7 @@ export default function StartPage() {
                 className={`w-full px-4 py-3 border rounded ${
                   errors.email ? 'border-atlas-error' : 'border-gray-300'
                 } focus:outline-none focus:ring-2 focus:ring-atlas-blue-light`}
-                required
+                placeholder="your@email.com (optional)"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-atlas-error">{errors.email}</p>
