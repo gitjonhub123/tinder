@@ -22,6 +22,9 @@ export default function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [isExporting, setIsExporting] = useState(false)
+  const [exportSortBy, setExportSortBy] = useState<'score' | 'name' | 'submittedAt' | 'createdAt'>('score')
+  const [exportSortOrder, setExportSortOrder] = useState<'asc' | 'desc'>('desc')
 
   const itemsPerPage = 20
 
@@ -57,6 +60,30 @@ export default function AdminDashboard() {
     return new Date(dateString).toLocaleString()
   }
 
+  const handleExportPDF = async () => {
+    setIsExporting(true)
+    try {
+      const response = await fetch(
+        `/api/admin/assessments/export-pdf?filter=${filter}&sortBy=${exportSortBy}&sortOrder=${exportSortOrder}`,
+        {
+          method: 'POST',
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to export PDF')
+      }
+
+      const data = await response.json()
+      alert(`PDF report sent to your email! (${data.count} assessments)`)
+    } catch (error) {
+      console.error('Error exporting PDF:', error)
+      alert('Failed to export PDF. Please try again.')
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   return (
     <>
       <Header />
@@ -64,37 +91,70 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-8 py-8">
           <h2 className="text-2xl font-bold text-atlas-text mb-6">Assessments</h2>
 
-          <div className="mb-6 flex gap-4">
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded font-semibold ${
-                filter === 'all'
-                  ? 'bg-atlas-blue-light text-white'
-                  : 'bg-atlas-gray text-atlas-text'
-              }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setFilter('submitted')}
-              className={`px-4 py-2 rounded font-semibold ${
-                filter === 'submitted'
-                  ? 'bg-atlas-blue-light text-white'
-                  : 'bg-atlas-gray text-atlas-text'
-              }`}
-            >
-              Submitted
-            </button>
-            <button
-              onClick={() => setFilter('scored')}
-              className={`px-4 py-2 rounded font-semibold ${
-                filter === 'scored'
-                  ? 'bg-atlas-blue-light text-white'
-                  : 'bg-atlas-gray text-atlas-text'
-              }`}
-            >
-              Scored
-            </button>
+          <div className="mb-6 flex flex-col gap-4">
+            <div className="flex gap-4">
+              <button
+                onClick={() => setFilter('all')}
+                className={`px-4 py-2 rounded font-semibold ${
+                  filter === 'all'
+                    ? 'bg-atlas-blue-light text-white'
+                    : 'bg-atlas-gray text-atlas-text'
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setFilter('submitted')}
+                className={`px-4 py-2 rounded font-semibold ${
+                  filter === 'submitted'
+                    ? 'bg-atlas-blue-light text-white'
+                    : 'bg-atlas-gray text-atlas-text'
+                }`}
+              >
+                Submitted
+              </button>
+              <button
+                onClick={() => setFilter('scored')}
+                className={`px-4 py-2 rounded font-semibold ${
+                  filter === 'scored'
+                    ? 'bg-atlas-blue-light text-white'
+                    : 'bg-atlas-gray text-atlas-text'
+                }`}
+              >
+                Scored
+              </button>
+            </div>
+
+            <div className="flex gap-4 items-center border-t pt-4">
+              <span className="text-sm font-semibold text-atlas-text">Export PDF:</span>
+              <select
+                value={exportSortBy}
+                onChange={(e) => setExportSortBy(e.target.value as any)}
+                className="px-3 py-2 border border-gray-300 rounded text-sm"
+                disabled={isExporting}
+              >
+                <option value="score">Sort by Score</option>
+                <option value="name">Sort by Name</option>
+                <option value="submittedAt">Sort by Submission Date</option>
+                <option value="createdAt">Sort by Created Date</option>
+              </select>
+              <select
+                value={exportSortOrder}
+                onChange={(e) => setExportSortOrder(e.target.value as any)}
+                className="px-3 py-2 border border-gray-300 rounded text-sm"
+                disabled={isExporting}
+              >
+                <option value="desc">Descending</option>
+                <option value="asc">Ascending</option>
+              </select>
+              <button
+                onClick={handleExportPDF}
+                disabled={isExporting}
+                className="px-6 py-2 bg-atlas-blue-light text-white rounded font-semibold hover:bg-opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isExporting ? 'Sending...' : 'Export & Email PDF'}
+              </button>
+            </div>
           </div>
 
           {isLoading ? (

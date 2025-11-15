@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import { Assessment, Answer } from '@prisma/client'
+import { generateResultsPDF } from './pdf'
 
 function getResend() {
   const apiKey = process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY
@@ -61,6 +62,49 @@ Atlas Assessment Team
     return { success: true }
   } catch (error) {
     console.error('Error sending email:', error)
+    throw error
+  }
+}
+
+export async function sendResultsPDF(
+  assessments: Array<{
+    id: string
+    candidateName: string
+    candidateEmail: string | null
+    startedAt: string
+    submittedAt: string | null
+    status: string
+    totalScore: number | null
+    createdAt: string
+  }>,
+  sortBy: string = 'score',
+  sortOrder: string = 'desc'
+) {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || 'jongreat177@gmail.com'
+    const dateStr = new Date().toLocaleDateString()
+
+    // Generate PDF
+    const pdfBuffer = await generateResultsPDF(assessments, sortBy, sortOrder)
+
+    // Send email with PDF attachment
+    const resend = getResend()
+    await resend.emails.send({
+      from: 'Atlas Assessment <noreply@atlas-assessment.com>',
+      to: adminEmail,
+      subject: `Atlas Assessment Results - ${dateStr}`,
+      text: `Please find attached the Atlas Assessment Results report.\n\nTotal Assessments: ${assessments.length}\nSorted by: ${sortBy} (${sortOrder})`,
+      attachments: [
+        {
+          filename: `atlas-assessment-results-${dateStr.replace(/\//g, '-')}.pdf`,
+          content: pdfBuffer.toString('base64'),
+        },
+      ],
+    })
+
+    return { success: true }
+  } catch (error) {
+    console.error('Error sending PDF email:', error)
     throw error
   }
 }

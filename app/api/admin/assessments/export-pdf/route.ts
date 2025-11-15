@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/middleware'
+import { sendResultsPDF } from '@/lib/email'
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const authError = await requireAdmin(request)
   if (authError) return authError
 
   try {
     const searchParams = request.nextUrl.searchParams
     const filter = searchParams.get('filter') || 'all'
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '20')
     const sortBy = searchParams.get('sortBy') || 'score'
     const sortOrder = searchParams.get('sortOrder') || 'desc'
-
-    const skip = (page - 1) * limit
 
     // Build where clause
     const where: any = {}
@@ -24,23 +21,17 @@ export async function GET(request: NextRequest) {
       where.status = 'scored'
     }
 
-    // Get assessments with total score
-    const [assessments, total] = await Promise.all([
-      prisma.assessment.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-        include: {
-          answers: {
-            select: {
-              score: true,
-            },
+    // Get all assessments (no pagination for export)
+    const assessments = await prisma.assessment.findMany({
+      where,
+      include: {
+        answers: {
+          select: {
+            score: true,
           },
         },
-      }),
-      prisma.assessment.count({ where }),
-    ])
+      },
+    })
 
     // Calculate total scores
     const assessmentsWithScores = assessments.map((assessment) => {
@@ -94,18 +85,20 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const totalPages = Math.ceil(total / limit)
+    // Generate PDF and send email
+    await sendResultsPDF(assessmentsWithScores, sortBy, sortOrder)
 
     return NextResponse.json({
-      assessments: assessmentsWithScores,
-      totalPages,
-      currentPage: page,
+      success: true,
+      message: 'PDF report sent to your email',
+      count: assessmentsWithScores.length,
     })
   } catch (error) {
-    console.error('Error fetching assessments:', error)
+    console.error('Error exporting PDF:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch assessments' },
+      { error: 'Failed to export PDF. Please try again.' },
       { status: 500 }
     )
   }
 }
+
