@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAT Math Test - Bluebook</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            }
+        };
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #1a1a1a;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #1e88e5;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .timer {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            display: none;
+        }
+
+        .main-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1e88e5;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        .intro-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .intro-content p {
+            margin-bottom: 20px;
+        }
+
+        .intro-content ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .intro-content li {
+            margin-bottom: 10px;
+        }
+
+        .question-container {
+            margin-bottom: 40px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e88e5;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #1e88e5;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .answer-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 18px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #ffffff;
+        }
+
+        .answer-option:hover {
+            border-color: #1e88e5;
+            background-color: #f0f7ff;
+        }
+
+        .answer-option.selected {
+            border-color: #1e88e5;
+            background-color: #e3f2fd;
+        }
+
+        .answer-option input[type="radio"] {
+            margin-right: 15px;
+            margin-top: 3px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #1e88e5;
+        }
+
+        .answer-label {
+            font-size: 16px;
+            color: #1a1a1a;
+            flex: 1;
+        }
+
+        .thank-you-content {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .thank-you-content h2 {
+            font-size: 32px;
+            color: #1e88e5;
+            margin-bottom: 20px;
+        }
+
+        .thank-you-content p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 40px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .nav-button {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background-color: #1e88e5;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: #1976d2;
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #d0d0d0;
+        }
+
+        .btn-hidden {
+            visibility: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .navigation {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SAT Math Test</h1>
+            <div class="timer" id="timer">Time: --:--</div>
+        </div>
+
+        <!-- Introduction Section -->
+        <div class="main-content active" id="intro-section">
+            <h2 class="section-title">Welcome to the SAT Math Test</h2>
+            <div class="intro-content">
+                <p>
+                    Welcome to this practice SAT Math test. This test is designed to help you familiarize yourself with the format and types of questions you'll encounter on the actual SAT exam.
+                </p>
+                <p>
+                    <strong>Test Instructions:</strong>
+                </p>
+                <ul>
+                    <li>This test contains 1 math question that you must answer.</li>
+                    <li>Read each question carefully before selecting your answer.</li>
+                    <li>You may review and change your answer before submitting.</li>
+                    <li>Use the navigation buttons at the bottom to move between sections.</li>
+                    <li>Take your time and work through each problem methodically.</li>
+                </ul>
+                <p>
+                    <strong>Answer Format:</strong> Each question is multiple choice with four answer options (A, B, C, and D). Select the answer you believe is correct by clicking on the option.
+                </p>
+                <p>
+                    When you're ready to begin, click the "Next" button below to proceed to the question.
+                </p>
+            </div>
+        </div>
+
+        <!-- Question Section -->
+        <div class="main-content" id="question-section">
+            <div class="question-container">
+                <div class="question-header">
+                    <div class="question-number">Question 1 of 1</div>
+                </div>
+                <div class="question-text">
+                    <p>
+                        If \( f(x) = 2x^2 - 5x + 3 \) and \( g(x) = x - 1 \), what is the value of \( f(g(3)) \)?
+                    </p>
+                </div>
+                <div class="answers">
+                    <label class="answer-option" id="option-a">
+                        <input type="radio" name="answer" value="A">
+                        <span class="answer-label"><strong>A)</strong> 1</span>
+                    </label>
+                    <label class="answer-option" id="option-b">
+                        <input type="radio" name="answer" value="B">
+                        <span class="answer-label"><strong>B)</strong> 6</span>
+                    </label>
+                    <label class="answer-option" id="option-c">
+                        <input type="radio" name="answer" value="C">
+                        <span class="answer-label"><strong>C)</strong> 9</span>
+                    </label>
+                    <label class="answer-option" id="option-d">
+                        <input type="radio" name="answer" value="D">
+                        <span class="answer-label"><strong>D)</strong> 12</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thank You Section -->
+        <div class="main-content" id="thankyou-section">
+            <div class="thank-you-content">
+                <h2>Thank You!</h2>
+                <p>
+                    You have completed this practice SAT Math test. We hope this experience has been helpful in preparing you for the actual exam.
+                </p>
+                <p>
+                    Remember to review any questions you found challenging and continue practicing with similar problems. Good luck with your SAT preparation!
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-button btn-secondary" id="prev-btn" onclick="previousSection()">Previous</button>
+            <button class="nav-button btn-primary" id="next-btn" onclick="nextSection()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 0;
+        const sections = ['intro-section', 'question-section', 'thankyou-section'];
+
+        function showSection(index) {
+            // Hide all sections
+            sections.forEach((sectionId, i) => {
+                const section = document.getElementById(sectionId);
+                if (i === index) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            if (index === 0) {
+                prevBtn.disabled = true;
+                prevBtn.classList.add('btn-hidden');
+                nextBtn.textContent = 'Next';
+            } else if (index === sections.length - 1) {
+                prevBtn.disabled = false;
+                prevBtn.classList.remove('btn-hidden');
+                nextBtn.textContent = 'Finish';
+                nextBtn.disabled = true;
+            } else {
+                prevBtn.disabled = false;
+                prevBtn.classList.remove('btn-hidden');
+                nextBtn.textContent = 'Next';
+                nextBtn.disabled = false;
+            }
+
+            currentSection = index;
+        }
+
+        function nextSection() {
+            if (currentSection < sections.length - 1) {
+                // If moving from question to thank you, check if answer is selected
+                if (currentSection === 1) {
+                    const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+                    if (!selectedAnswer) {
+                        alert('Please select an answer before proceeding.');
+                        return;
+                    }
+                }
+                showSection(currentSection + 1);
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 0) {
+                showSection(currentSection - 1);
+            }
+        }
+
+        // Add click handlers for answer options
+        document.querySelectorAll('.answer-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                // If clicking on the label, don't prevent default
+                if (e.target.tagName !== 'INPUT') {
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                }
+                
+                // Update visual selection
+                document.querySelectorAll('.answer-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        // Update visual selection when radio is clicked directly
+        document.querySelectorAll('input[name="answer"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.answer-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                if (this.checked) {
+                    this.closest('.answer-option').classList.add('selected');
+                }
+            });
+        });
+
+        // Initialize
+        showSection(0);
+
+        // Simple timer (optional - can be made functional)
+        function updateTimer() {
+            // Timer display - can be made functional if needed
+            document.getElementById('timer').textContent = 'Time: --:--';
+        }
+        updateTimer();
+    </script>
+</body>
+</html>
