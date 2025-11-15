@@ -6,10 +6,9 @@ generator client {
 }
 
 datasource db {
-  // Defaults to SQLite for local dev, but Vercel requires PostgreSQL
-  // For Vercel: Set DATABASE_PROVIDER=postgresql and DATABASE_URL to PostgreSQL connection string
-  // For local: Leave unset or set DATABASE_URL="file:./dev.db"
-  provider = env("DATABASE_PROVIDER") == "postgresql" ? "postgresql" : "sqlite"
+  // ⚠️ FOR VERCEL: Change "sqlite" to "postgresql" on line 12 below
+  // Then set DATABASE_URL in Vercel environment variables to your PostgreSQL connection string
+  provider = "sqlite"  // Change to "postgresql" for Vercel deployment
   url      = env("DATABASE_URL")
 }
 
