@@ -7,33 +7,26 @@ import Header from '@/components/Header'
 export default function CompletePage() {
   const params = useParams()
   const assessmentId = params.id as string
-  const [assessment, setAssessment] = useState<{
-    candidateName: string
-    candidateEmail: string
-    submittedAt: string
-  } | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const loadAssessment = async () => {
       try {
         const response = await fetch(`/api/assessments/${assessmentId}`)
         if (response.ok) {
-          const data = await response.json()
-          setAssessment({
-            candidateName: data.candidateName,
-            candidateEmail: data.candidateEmail,
-            submittedAt: data.submittedAt,
-          })
+          // Assessment loaded successfully
         }
       } catch (error) {
         console.error('Error loading assessment:', error)
+      } finally {
+        setIsLoading(false)
       }
     }
 
     loadAssessment()
   }, [assessmentId])
 
-  if (!assessment) {
+  if (isLoading) {
     return (
       <>
         <Header />
@@ -43,8 +36,6 @@ export default function CompletePage() {
       </>
     )
   }
-
-  const submittedDate = new Date(assessment.submittedAt).toLocaleString()
 
   return (
     <>
@@ -63,18 +54,6 @@ export default function CompletePage() {
             <div className="flex items-center gap-2">
               <span className="text-atlas-success text-xl">✓</span>
               <span className="text-base text-atlas-text">All 4 answers received</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-atlas-success text-xl">✓</span>
-              <span className="text-base text-atlas-text">
-                Submission time: {submittedDate}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-atlas-success text-xl">✓</span>
-              <span className="text-base text-atlas-text">
-                Candidate: {assessment.candidateName}
-              </span>
             </div>
           </div>
 
