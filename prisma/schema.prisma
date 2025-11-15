@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL") // For SQLite: "file:./dev.db" or use env var
 }
 
 model Assessment {
@@ -30,7 +30,7 @@ model Answer {
   assessmentId   String
   assessment     Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
   questionNumber Int        // 1-4
-  answerText     String     @db.Text
+  answerText     String
   score          Int?       // 0-500, null until scored
   lastSavedAt    DateTime   @default(now())
   
