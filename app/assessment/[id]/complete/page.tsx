@@ -42,25 +42,31 @@ export default function CompletePage() {
       <Header />
       <main className="pt-[60px] min-h-screen bg-white">
         <div className="max-w-[700px] mx-auto px-8 py-16">
-          <h2 className="text-3xl font-bold text-atlas-success mb-8">
+          <h2 className="text-[40px] md:text-[36px] sm:text-[32px] font-bold mb-8" style={{ fontFamily: 'Georgia, Garamond, serif', color: '#1E3A5F' }}>
             Assessment Complete
           </h2>
 
-          <p className="text-base leading-relaxed text-atlas-text mb-8">
-            Your assessment has been successfully submitted.
+          <p className="text-[18px] md:text-[16px] sm:text-[15px] font-normal text-center mb-8" style={{ fontFamily: 'Georgia, Garamond, serif', color: '#333333', lineHeight: '1.8' }}>
+            Your assessment has been submitted.
+          </p>
+
+          <div className="mb-[100px]"></div>
+
+          <p className="text-[18px] md:text-[16px] sm:text-[15px] font-normal text-center mb-8" style={{ fontFamily: 'Georgia, Garamond, serif', color: '#333333', lineHeight: '1.8' }}>
+            Top performers will be invited to technical interviews at leading AI organizations.
           </p>
 
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-atlas-text mb-4">
+            <h3 className="text-lg font-semibold mb-4" style={{ fontFamily: 'Georgia, Garamond, serif', color: '#333333' }}>
               What happens next:
             </h3>
-            <p className="text-base leading-relaxed text-atlas-text mb-4">
+            <p className="text-[18px] md:text-[16px] sm:text-[15px] leading-relaxed mb-4" style={{ fontFamily: 'Georgia, Garamond, serif', color: '#333333', lineHeight: '1.8' }}>
               Your responses will be reviewed and scored by senior machine learning engineers.
             </p>
-            <p className="text-base leading-relaxed text-atlas-text mb-4">
+            <p className="text-[18px] md:text-[16px] sm:text-[15px] leading-relaxed mb-4" style={{ fontFamily: 'Georgia, Garamond, serif', color: '#333333', lineHeight: '1.8' }}>
               Each answer is scored out of 500 points (maximum 2000 total).
             </p>
-            <p className="text-base leading-relaxed text-atlas-text">
+            <p className="text-[18px] md:text-[16px] sm:text-[15px] leading-relaxed" style={{ fontFamily: 'Georgia, Garamond, serif', color: '#333333', lineHeight: '1.8' }}>
               Your assessment has been submitted successfully. Results will be available through the admin dashboard.
             </p>
           </div>
