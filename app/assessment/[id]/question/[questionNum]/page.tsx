@@ -16,36 +16,55 @@ export default function QuestionPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const autoSaveIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const timerInitializedRef = useRef(false)
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const question = QUESTIONS[questionNum - 1]
   const isLastQuestion = questionNum === 4
 
-  // Load assessment and answer
+  // Load assessment data - only once per assessment (not per question)
   useEffect(() => {
-    const loadData = async () => {
+    const loadAssessment = async () => {
       try {
-        const [assessmentRes, answerRes] = await Promise.all([
-          fetch(`/api/assessments/${assessmentId}`),
-          fetch(`/api/assessments/${assessmentId}/answers/${questionNum}`),
-        ])
-
+        const assessmentRes = await fetch(`/api/assessments/${assessmentId}`)
         if (assessmentRes.ok) {
           const assessment = await assessmentRes.json()
+          // Set timer from server value
           setTimeRemaining(assessment.timeRemaining)
+          // Mark timer as initialized so countdown can start
+          if (!timerInitializedRef.current) {
+            timerInitializedRef.current = true
+          }
         }
+      } catch (error) {
+        console.error('Error loading assessment:', error)
+      }
+    }
 
+    // Only load assessment data when assessmentId changes, not when questionNum changes
+    loadAssessment()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assessmentId])
+
+  // Load answer data - depends on questionNum
+  useEffect(() => {
+    const loadAnswer = async () => {
+      try {
+        const answerRes = await fetch(`/api/assessments/${assessmentId}/answers/${questionNum}`)
         if (answerRes.ok) {
           const answerData = await answerRes.json()
           if (answerData.answerText) {
             setAnswer(answerData.answerText)
+          } else {
+            setAnswer('')
           }
         }
       } catch (error) {
-        console.error('Error loading data:', error)
+        console.error('Error loading answer:', error)
       }
     }
 
-    loadData()
+    loadAnswer()
   }, [assessmentId, questionNum])
 
   const saveAnswer = useCallback(async (isAutoSave = false) => {
@@ -102,11 +121,21 @@ export default function QuestionPage() {
     }
   }, [assessmentId, router, saveAnswer])
 
-  // Timer countdown
+  // Timer countdown - only depends on assessmentId, not questionNum
   useEffect(() => {
+    // Only start timer if it hasn't been initialized yet
+    if (!timerInitializedRef.current) {
+      return
+    }
+
+    // Clear any existing timer
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current)
+    }
+
     let lastServerUpdate = timeRemaining
     
-    const timerInterval = setInterval(async () => {
+    timerIntervalRef.current = setInterval(async () => {
       setTimeRemaining((prev) => {
         const newTime = prev <= 1 ? 0 : prev - 1
         
@@ -128,8 +157,13 @@ export default function QuestionPage() {
       })
     }, 1000)
 
-    return () => clearInterval(timerInterval)
-  }, [assessmentId, handleAutoSubmit])
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current)
+        timerIntervalRef.current = null
+      }
+    }
+  }, [assessmentId, handleAutoSubmit, timeRemaining])
 
   const handleSubmit = async () => {
     // Save current answer first
