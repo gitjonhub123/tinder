@@ -6,8 +6,11 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL") // For SQLite: "file:./dev.db" or use env var
+  // Defaults to SQLite for local dev, but Vercel requires PostgreSQL
+  // For Vercel: Set DATABASE_PROVIDER=postgresql and DATABASE_URL to PostgreSQL connection string
+  // For local: Leave unset or set DATABASE_URL="file:./dev.db"
+  provider = env("DATABASE_PROVIDER") == "postgresql" ? "postgresql" : "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model Assessment {
