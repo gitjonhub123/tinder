@@ -47,7 +47,8 @@ export default function StartPage() {
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to create assessment')
+        const errorMessage = data.error || 'Failed to create assessment'
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()

@@ -56,10 +56,27 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json({ assessmentId: assessment.id })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating assessment:', error)
+    
+    // Check for Prisma connection errors
+    if (error?.code === 'P1001' || error?.message?.includes('Can\'t reach database server')) {
+      return NextResponse.json(
+        { error: 'Database connection failed. Please check DATABASE_URL configuration.' },
+        { status: 500 }
+      )
+    }
+    
+    // Check for Prisma schema errors
+    if (error?.code === 'P2021' || error?.message?.includes('does not exist')) {
+      return NextResponse.json(
+        { error: 'Database tables not found. Please run Prisma migrations.' },
+        { status: 500 }
+      )
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to create assessment' },
+      { error: error?.message || 'Failed to create assessment. Please try again.' },
       { status: 500 }
     )
   }
