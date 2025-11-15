@@ -7,8 +7,7 @@ import Header from '@/components/Header'
 export default function StartPage() {
   const router = useRouter()
   const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({})
+  const [errors, setErrors] = useState<{ name?: string }>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validateEmail = (email: string): boolean => {
@@ -21,13 +20,9 @@ export default function StartPage() {
     setErrors({})
 
     // Validation
-    const newErrors: { name?: string; email?: string } = {}
+    const newErrors: { name?: string } = {}
     if (!name.trim()) {
       newErrors.name = 'Name is required'
-    }
-    // Email is optional, but if provided, must be valid
-    if (email.trim() && !validateEmail(email)) {
-      newErrors.email = 'Invalid email address'
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -41,7 +36,7 @@ export default function StartPage() {
       const response = await fetch('/api/assessments/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), email: email.trim() }),
+        body: JSON.stringify({ name: name.trim() }),
       })
 
       if (!response.ok) {
@@ -53,7 +48,7 @@ export default function StartPage() {
       const data = await response.json()
       router.push(`/assessment/${data.assessmentId}/instructions`)
     } catch (error) {
-      setErrors({ email: error instanceof Error ? error.message : 'An error occurred' })
+      setErrors({ name: error instanceof Error ? error.message : 'An error occurred' })
     } finally {
       setIsSubmitting(false)
     }
@@ -108,25 +103,6 @@ export default function StartPage() {
               />
               {errors.name && (
                 <p className="mt-1 text-sm text-atlas-error">{errors.name}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-atlas-text mb-2">
-                Email Address <span className="text-gray-500 text-xs">(optional)</span>
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={`w-full px-4 py-3 border rounded ${
-                  errors.email ? 'border-atlas-error' : 'border-gray-300'
-                } focus:outline-none focus:ring-2 focus:ring-atlas-blue-light`}
-                placeholder="your@email.com (optional)"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-atlas-error">{errors.email}</p>
               )}
             </div>
 
