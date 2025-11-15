@@ -6,9 +6,9 @@ generator client {
 }
 
 datasource db {
-  // ⚠️ FOR VERCEL: Change "sqlite" to "postgresql" on line 12 below
-  // Then set DATABASE_URL in Vercel environment variables to your PostgreSQL connection string
-  provider = "sqlite"  // Change to "postgresql" for Vercel deployment
+  // Using PostgreSQL for Vercel deployment
+  // For local development, you can change this to "sqlite" and use DATABASE_URL="file:./dev.db"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -32,7 +32,7 @@ model Answer {
   assessmentId   String
   assessment     Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
   questionNumber Int        // 1-4
-  answerText     String
+  answerText     String     @db.Text
   score          Int?       // 0-500, null until scored
   lastSavedAt    DateTime   @default(now())
   
